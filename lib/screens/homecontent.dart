@@ -4,6 +4,8 @@ import 'package:sample_project/screens/placedetailsPage.dart';
 import 'package:sample_project/screens/Arrays/places.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sample_project/screens/loginPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 
 class Homecontent extends StatefulWidget {
@@ -15,21 +17,57 @@ class Homecontent extends StatefulWidget {
 
 class _HomecontentState extends State<Homecontent> {
   String selectedCategory = categories[0];
+  final user = FirebaseAuth.instance.currentUser;
+  List<Map<String, dynamic>> favoritePlaces = [];
 
-//signUserOut method
+  @override
+  void initState() {
+    super.initState();
+    _loadFavoritePlaces();
+  }
+
+  void _loadFavoritePlaces() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? favoritesString = prefs.getString('favoritePlaces');
+    if (favoritesString != null) {
+      List<dynamic> favoriteList = json.decode(favoritesString);
+      favoritePlaces = favoriteList.cast<Map<String, dynamic>>();
+    }
+    setState(() {});
+  }
+
+  void _toggleFavoritePlace(Map<String, dynamic> place) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? favoritesString = prefs.getString('favoritePlaces');
+    List<dynamic> favoriteList =
+        favoritesString != null ? json.decode(favoritesString) : [];
+
+    bool isFavorite = favoriteList
+        .any((favoritePlace) => favoritePlace['name'] == place['name']);
+
+    if (isFavorite) {
+      favoriteList.removeWhere(
+          (favoritePlace) => favoritePlace['name'] == place['name']);
+    } else {
+      favoriteList.add(place);
+    }
+
+    await prefs.setString('favoritePlaces', json.encode(favoriteList));
+    _loadFavoritePlaces();
+  }
+
+  bool _isFavoritePlace(String placeName) {
+    return favoritePlaces
+        .any((favoritePlace) => favoritePlace['name'] == placeName);
+  }
+
   void signUserOut() async {
-    //sign out the user
     FirebaseAuth.instance.signOut();
-
-    //Navigate to login page
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
     );
   }
-
-// Get the logged-in user
-  final user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +98,6 @@ class _HomecontentState extends State<Homecontent> {
                           text: user?.email,
                           style: TextStyle(
                             fontSize: 18,
-                            // fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
@@ -68,7 +105,6 @@ class _HomecontentState extends State<Homecontent> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      // Show logout dialog
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -78,14 +114,12 @@ class _HomecontentState extends State<Homecontent> {
                             actions: <Widget>[
                               TextButton(
                                 onPressed: () {
-                                  Navigator.of(context)
-                                      .pop(); // Close the dialog
+                                  Navigator.of(context).pop();
                                 },
                                 child: Text('Cancel'),
                               ),
                               TextButton(
                                 onPressed: () {
-                                  //call signUserOut
                                   signUserOut();
                                 },
                                 child: Text('Logout'),
@@ -181,12 +215,16 @@ class _HomecontentState extends State<Homecontent> {
                               height: 170,
                               fit: BoxFit.cover,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Icon(
-                                Icons.favorite,
-                                color: Colors.white,
+                            IconButton(
+                              icon: Icon(
+                                _isFavoritePlace(place['name']!)
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: Colors.red,
                               ),
+                              onPressed: () {
+                                _toggleFavoritePlace(place);
+                              },
                             ),
                           ],
                         ),
