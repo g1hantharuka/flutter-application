@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sample_project/screens/profilePage.dart';
 import 'package:sample_project/screens/favoritesPage.dart';
 import 'package:sample_project/screens/homecontent.dart';
-import 'package:sample_project/screens/visited.dart';
 import 'package:sample_project/screens/weather.dart';
 
 class HomePage extends StatefulWidget {
