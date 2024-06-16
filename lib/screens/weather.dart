@@ -11,10 +11,11 @@ class Weather extends StatefulWidget {
 }
 
 class _WeatherState extends State<Weather> {
-  String _weather = '';
-  String _temperature = '';
-  String _country = '';
+  String _weather = 'Loading...';
+  String _temperature = 'Loading...';
+  String _country = 'Loading...';
   String _city = '';
+  bool _hasError = false;
 
   @override
   void initState() {
@@ -56,15 +57,18 @@ class _WeatherState extends State<Weather> {
           _temperature = '$temperature°C';
           _country = '$country';
           _city = '$name';
+          _hasError = false; // Reset error flag
         });
       } else {
         setState(() {
-          _weather = 'Failed to fetch weather';
+          // _weather = 'Failed to fetch weather';
+          _hasError = true; // Set error flag
         });
       }
     } catch (error) {
       setState(() {
-        _weather = 'Error: $error';
+        // _weather = 'Failed to fetch weather';
+        _hasError = true; // Set error flag
       });
     }
   }
@@ -77,7 +81,8 @@ class _WeatherState extends State<Weather> {
       _fetchWeather(position.latitude, position.longitude);
     } catch (error) {
       setState(() {
-        _weather = 'Error: $error';
+        // _country = 'You are not connected to the internet';
+        _hasError = true; // Set error flag
       });
     }
   }
@@ -90,88 +95,101 @@ class _WeatherState extends State<Weather> {
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Card(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    
-                    Image.asset(
-                      'assets/images/weather.jpg',
-                      width: double.infinity,
-                      height: 170,
-                      fit: BoxFit.cover,
+        child: Center(
+          // Center widget added here
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Card(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(
+                    'assets/images/weather.jpg',
+                    width: double.infinity,
+                    height: 170,
+                    fit: BoxFit.cover,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Location: ',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '$_city  $_country',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Text(
+                              'Weather: ',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              _weather,
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Text(
+                              'Temperature: ',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              _temperature,
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Visibility(
+                          visible: _hasError,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              'You are not connected to the internet. Please check your connection and try again.',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Location: ',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                '$_city, $_country',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Text(
-                                'Weather: ',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                _weather,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Text(
-                                'Temperature: ',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                _temperature,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

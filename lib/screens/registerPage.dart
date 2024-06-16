@@ -38,15 +38,33 @@ void signUserUp() async {
       //   MaterialPageRoute(builder: (context) => HomePage()),
       // );
     } on FirebaseAuthException catch (e) {
-       await showDialog(
+      //  await showDialog(
+      //   context: context,
+      //   builder: (context) => AlertDialog(
+      //     title: Text('Error'),
+      //     content: Text('Error signing up: ${e.code}'),
+      //     actions: [
+      //       TextButton(
+      //         onPressed: () => Navigator.pop(context),
+      //         child: Text('OK'),
+      //       ),
+      //     ],
+      //   ),
+      // );
+      await showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Error'),
-          content: Text('Error signing up: ${e.code}'),
+          content: Text('You are not connected to the internet.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
+              child: Text(
+                'OK',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
             ),
           ],
         ),

@@ -28,19 +28,38 @@ class _LoginPageState extends State<LoginPage> {
       if (e.code == 'invalid-credential') {
         wrongCredentialMessage();
       } else {
+        // await showDialog(
+        //   context: context,
+        //   builder: (context) => AlertDialog(
+        //     title: Text('Error'),
+        //     content: Text('You are not connected to the internet.'),
+        //     actions: [
+        //       TextButton(
+        //         onPressed: () => Navigator.pop(context),
+        //         child: Text('OK'),
+        //       ),
+        //     ],
+        //   ),
+        // );
         await showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Error'),
-            content: Text('Error signing in: ${e.code}'),
+            content: Text('You are not connected to the internet.'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('OK'),
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
               ),
             ],
           ),
         );
+
       }
     }
   }
@@ -179,22 +198,22 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         child: Text('Login'),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RegistrationPage()),
-                          );
+                      // TextButton(
+                      //   onPressed: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) => RegistrationPage()),
+                      //     );
                           
-                        },
-                        child: Text(
-                          'Forgot Password ?',
-                          style: TextStyle(
-                            color: Theme.of(context).textTheme.bodyLarge!.color,
-                          ),
-                        ),
-                      ),
+                      //   },
+                      //   child: Text(
+                      //     'Forgot Password ?',
+                      //     style: TextStyle(
+                      //       color: Theme.of(context).textTheme.bodyLarge!.color,
+                      //     ),
+                      //   ),
+                      // ),
                       TextButton(
                         onPressed: () {
                           Navigator.push(
