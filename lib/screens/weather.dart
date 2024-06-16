@@ -23,7 +23,6 @@ class _WeatherState extends State<Weather> {
     _checkLocationPermission();
   }
 
-  // Check and request location permission
   Future<void> _checkLocationPermission() async {
     if (await Permission.location.request().isGranted) {
       _fetchLocationAndWeather();
@@ -34,10 +33,9 @@ class _WeatherState extends State<Weather> {
     }
   }
 
-  // Function to fetch weather details using coordinates
   Future<void> _fetchWeather(double lat, double lon) async {
     final apiKey =
-        '62316320be616a81d504b9991522dec0'; // Replace with your OpenWeatherMap API key
+        '62316320be616a81d504b9991522dec0';
     final url =
         'http://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$apiKey';
 
@@ -57,23 +55,20 @@ class _WeatherState extends State<Weather> {
           _temperature = '$temperature°C';
           _country = '$country';
           _city = '$name';
-          _hasError = false; // Reset error flag
+          _hasError = false; 
         });
       } else {
         setState(() {
-          // _weather = 'Failed to fetch weather';
-          _hasError = true; // Set error flag
+          _hasError = true; 
         });
       }
     } catch (error) {
       setState(() {
-        // _weather = 'Failed to fetch weather';
-        _hasError = true; // Set error flag
+        _hasError = true; 
       });
     }
   }
 
-  // Function to fetch current location coordinates
   Future<void> _fetchLocationAndWeather() async {
     try {
       Position position = await Geolocator.getCurrentPosition(
@@ -81,8 +76,7 @@ class _WeatherState extends State<Weather> {
       _fetchWeather(position.latitude, position.longitude);
     } catch (error) {
       setState(() {
-        // _country = 'You are not connected to the internet';
-        _hasError = true; // Set error flag
+        _hasError = true; 
       });
     }
   }
@@ -96,7 +90,6 @@ class _WeatherState extends State<Weather> {
       ),
       body: SingleChildScrollView(
         child: Center(
-          // Center widget added here
           child: Padding(
             padding: const EdgeInsets.all(18.0),
             child: Card(

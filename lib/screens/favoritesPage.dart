@@ -52,7 +52,6 @@ class _FavouritesPageState extends State<FavouritesPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Display places using clickable cards
             for (var place in favoritePlaces)
               GestureDetector(
                 onTap: () {

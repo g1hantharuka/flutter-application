@@ -12,14 +12,13 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
-//a blank sign user in method
+
   void signUserIn() async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
-      // Navigate to HomePage if successful login
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
@@ -28,19 +27,6 @@ class _LoginPageState extends State<LoginPage> {
       if (e.code == 'invalid-credential') {
         wrongCredentialMessage();
       } else {
-        // await showDialog(
-        //   context: context,
-        //   builder: (context) => AlertDialog(
-        //     title: Text('Error'),
-        //     content: Text('You are not connected to the internet.'),
-        //     actions: [
-        //       TextButton(
-        //         onPressed: () => Navigator.pop(context),
-        //         child: Text('OK'),
-        //       ),
-        //     ],
-        //   ),
-        // );
         await showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -198,22 +184,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         child: Text('Login'),
                       ),
-                      // TextButton(
-                      //   onPressed: () {
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //           builder: (context) => RegistrationPage()),
-                      //     );
-                          
-                      //   },
-                      //   child: Text(
-                      //     'Forgot Password ?',
-                      //     style: TextStyle(
-                      //       color: Theme.of(context).textTheme.bodyLarge!.color,
-                      //     ),
-                      //   ),
-                      // ),
                       TextButton(
                         onPressed: () {
                           Navigator.push(
