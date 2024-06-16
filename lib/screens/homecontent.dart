@@ -105,6 +105,7 @@ class _HomecontentState extends State<Homecontent> {
                   ),
                   GestureDetector(
                     onTap: () {
+                      
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -116,18 +117,35 @@ class _HomecontentState extends State<Homecontent> {
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Cancel'),
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .color,
+                                  ),
+                                ),
                               ),
                               TextButton(
                                 onPressed: () {
                                   signUserOut();
                                 },
-                                child: Text('Logout'),
+                                child: Text(
+                                  'Logout',
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .color,
+                                  ),
+                                ),
                               ),
                             ],
                           );
                         },
                       );
+
                     },
                     child: CircleAvatar(
                       backgroundImage: AssetImage('assets/images/profile.jpg'),
