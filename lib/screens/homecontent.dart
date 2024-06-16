@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:sample_project/screens/Arrays/categories.dart';
 import 'package:sample_project/screens/placedetailsPage.dart';
@@ -6,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sample_project/screens/loginPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-
+import 'dart:io';
 
 class Homecontent extends StatefulWidget {
   const Homecontent({Key? key}) : super(key: key);
@@ -19,11 +20,13 @@ class _HomecontentState extends State<Homecontent> {
   String selectedCategory = categories[0];
   final user = FirebaseAuth.instance.currentUser;
   List<Map<String, dynamic>> favoritePlaces = [];
+  String? _profileImagePath;
 
   @override
   void initState() {
     super.initState();
     _loadFavoritePlaces();
+    _loadProfileImage();
   }
 
   void _loadFavoritePlaces() async {
@@ -34,6 +37,13 @@ class _HomecontentState extends State<Homecontent> {
       favoritePlaces = favoriteList.cast<Map<String, dynamic>>();
     }
     setState(() {});
+  }
+
+  void _loadProfileImage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _profileImagePath = prefs.getString('profileImagePath');
+    });
   }
 
   void _toggleFavoritePlace(Map<String, dynamic> place) async {
@@ -105,7 +115,6 @@ class _HomecontentState extends State<Homecontent> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -145,10 +154,12 @@ class _HomecontentState extends State<Homecontent> {
                           );
                         },
                       );
-
                     },
                     child: CircleAvatar(
-                      backgroundImage: AssetImage('assets/images/profile.jpg'),
+                      backgroundImage: _profileImagePath != null
+                          ? FileImage(File(_profileImagePath!))
+                          : AssetImage('assets/images/profilepic.jpg')
+                              as ImageProvider,
                       radius: 30,
                     ),
                   ),
