@@ -9,6 +9,7 @@ class RegistrationPage extends StatefulWidget {
   _RegistrationPageState createState() => _RegistrationPageState();
 }
 
+
 class _RegistrationPageState extends State<RegistrationPage> {
 
   final _emailController = TextEditingController();
