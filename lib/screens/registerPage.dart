@@ -11,11 +11,10 @@ class RegistrationPage extends StatefulWidget {
 
 class _RegistrationPageState extends State<RegistrationPage> {
 
-
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  // final _mobileNumberController = TextEditingController();
+
 void signUserUp() async {
     try {
       if (_passwordController.text == _confirmPasswordController.text) {
@@ -32,21 +31,23 @@ void signUserUp() async {
          passwordMismatchMessage();
         
       }
-      // Navigate to HomePage if successful login
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => HomePage()),
-      // );
+      
     } on FirebaseAuthException catch (e) {
-       await showDialog(
+      
+      await showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Error'),
-          content: Text('Error signing up: ${e.code}'),
+          content: Text('You are not connected to the internet.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
+              child: Text(
+                'OK',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
             ),
           ],
         ),
@@ -112,32 +113,6 @@ void signUserUp() async {
                           ),
                         ),
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      //   child: TextField(
-                      //     controller: _nameController,
-                      //     decoration: InputDecoration(
-                      //       labelText: 'Username',
-                      //       labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
-                      //       filled: true,
-                      //       fillColor: Theme.of(context).colorScheme.primary,
-                      //       contentPadding: EdgeInsets.symmetric(
-                      //         vertical: 12.0,
-                      //         horizontal: 16.0,
-                      //       ),
-                      //       enabledBorder: OutlineInputBorder(
-                      //         borderSide:
-                      //             BorderSide(color:Theme.of(context).colorScheme.secondary, width: 1.0),
-                      //         borderRadius: BorderRadius.circular(20.0),
-                      //       ),
-                      //       focusedBorder: OutlineInputBorder(
-                      //         borderSide:
-                      //             BorderSide(color: Theme.of(context).colorScheme.onPrimary, width: 2.0),
-                      //         borderRadius: BorderRadius.circular(20.0),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                       SizedBox(height: 12),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -169,41 +144,8 @@ void signUserUp() async {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                          // obscureText: true,
                         ),
                       ),
-                      // SizedBox(height: 12),
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      //   child: TextField(
-                      //     controller: _mobileNumberController,
-                      //     decoration: InputDecoration(
-                      //       labelText: 'Mobile Number',
-                      //       labelStyle: TextStyle(
-                      //           color:
-                      //               Theme.of(context).colorScheme.onSecondary),
-                      //       filled: true,
-                      //       fillColor: Theme.of(context).colorScheme.primary,
-                      //       contentPadding: EdgeInsets.symmetric(
-                      //         vertical: 12.0,
-                      //         horizontal: 16.0,
-                      //       ),
-                      //       enabledBorder: OutlineInputBorder(
-                      //         borderSide:
-                      //             BorderSide(color:Theme.of(context).colorScheme.secondary, width: 1.0),
-                      //         borderRadius: BorderRadius.circular(20.0),
-                      //       ),
-                      //       focusedBorder: OutlineInputBorder(
-                      //         borderSide:
-                      //             BorderSide(
-                      //             color:
-                      //                 Theme.of(context).colorScheme.onPrimary, width: 2.0),
-                      //         borderRadius: BorderRadius.circular(20.0),
-                      //       ),
-                      //     ),
-                      //     obscureText: true,
-                      //   ),
-                      // ),
                       SizedBox(height: 12),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12.0),
