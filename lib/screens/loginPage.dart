@@ -12,14 +12,13 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
-//a blank sign user in method
+
   void signUserIn() async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
-      // Navigate to HomePage if successful login
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
@@ -32,15 +31,21 @@ class _LoginPageState extends State<LoginPage> {
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Error'),
-            content: Text('Error signing in: ${e.code}'),
+            content: Text('You are not connected to the internet.'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('OK'),
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
               ),
             ],
           ),
         );
+
       }
     }
   }
@@ -178,23 +183,6 @@ class _LoginPageState extends State<LoginPage> {
                           foregroundColor: Color.fromARGB(255, 255, 255, 255),
                         ),
                         child: Text('Login'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RegistrationPage()),
-                          );
-                          //signUserIn method called
-                          // signUserIn();
-                        },
-                        child: Text(
-                          'Forgot Password ?',
-                          style: TextStyle(
-                            color: Theme.of(context).textTheme.bodyLarge!.color,
-                          ),
-                        ),
                       ),
                       TextButton(
                         onPressed: () {

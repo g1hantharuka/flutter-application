@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sample_project/screens/placedetailsPage.dart';
-import 'package:sample_project/screens/Arrays/favourites.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class FavouritesPage extends StatefulWidget {
   const FavouritesPage({Key? key}) : super(key: key);
@@ -9,17 +10,48 @@ class FavouritesPage extends StatefulWidget {
 }
 
 class _FavouritesPageState extends State<FavouritesPage> {
+  List<Map<String, dynamic>> favoritePlaces = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavoritePlaces();
+  }
+
+  void _loadFavoritePlaces() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? favoritesString = prefs.getString('favoritePlaces');
+    if (favoritesString != null) {
+      List<dynamic> favoriteList = json.decode(favoritesString);
+      setState(() {
+        favoritePlaces = favoriteList.cast<Map<String, dynamic>>();
+      });
+    }
+  }
+
+  void _removeFavoritePlace(String placeName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? favoritesString = prefs.getString('favoritePlaces');
+    if (favoritesString != null) {
+      List<dynamic> favoriteList = json.decode(favoritesString);
+      favoriteList.removeWhere((place) => place['name'] == placeName);
+      await prefs.setString('favoritePlaces', json.encode(favoriteList));
+      setState(() {
+        favoritePlaces = favoriteList.cast<Map<String, dynamic>>();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Favourite Places'), 
-        automaticallyImplyLeading: false, 
+        title: Text('Favourite Places'),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Display places using clickable cards
             for (var place in favoritePlaces)
               GestureDetector(
                 onTap: () {
@@ -31,9 +63,9 @@ class _FavouritesPageState extends State<FavouritesPage> {
                         image: place['image']!,
                         description: place['description']!,
                         rating: place['rating']!,
-                        hours: place['hours']!, 
-                        days: place['days']!, 
-                        category: place['category']!, 
+                        hours: place['hours']!,
+                        days: place['days']!,
+                        category: place['category']!,
                       ),
                     ),
                   );
@@ -57,7 +89,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
                               padding: const EdgeInsets.all(10.0),
                               child: GestureDetector(
                                 onTap: () {
-                                  
+                                  _removeFavoritePlace(place['name']!);
                                 },
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(6),
@@ -130,8 +162,3 @@ class _FavouritesPageState extends State<FavouritesPage> {
     );
   }
 }
-
-
-
-
-

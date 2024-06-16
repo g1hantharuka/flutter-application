@@ -1,4 +1,9 @@
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:battery_plus/battery_plus.dart';
 import 'package:sample_project/screens/homePage.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -9,12 +14,50 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _mobileNumberController = TextEditingController();
-  final _countryController = TextEditingController();
+
+  File? _profileImage;
+  int _batteryLevel = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _getBatteryLevel();
+    _loadProfileImage();
+  }
+
+  Future<void> _loadProfileImage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? imagePath = prefs.getString('profileImagePath');
+    if (imagePath != null) {
+      setState(() {
+        _profileImage = File(imagePath);
+      });
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('profileImagePath', pickedFile.path);
+    }
+  }
+
+  Future<void> _getBatteryLevel() async {
+    final battery = Battery();
+    final batteryLevel = await battery.batteryLevel;
+    setState(() {
+      _batteryLevel = batteryLevel;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +75,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       CircleAvatar(
                         radius: 50,
-                        backgroundImage:
-                            AssetImage('assets/images/profile.jpg'),
+                        backgroundImage: _profileImage != null
+                            ? FileImage(_profileImage!)
+                            : AssetImage('assets/images/profilepic.jpg')
+                                as ImageProvider,
                       ),
                       SizedBox(height: 20),
                       Text(
@@ -46,11 +91,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       SizedBox(height: 12),
                       TextButton.icon(
-                        onPressed: () {
-                          
-                        },
+                        onPressed: _pickImage,
                         icon: Icon(
-                          Icons.edit, 
+                          Icons.camera_alt,
                           color: Theme.of(context).textTheme.bodyLarge!.color,
                         ),
                         label: Text(
@@ -69,7 +112,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     controller: _nameController,
                     decoration: InputDecoration(
                       labelText: 'Username',
-                      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary),
                       filled: true,
                       fillColor: Theme.of(context).colorScheme.primary,
                       contentPadding: EdgeInsets.symmetric(
@@ -77,51 +121,29 @@ class _ProfilePageState extends State<ProfilePage> {
                         horizontal: 16.0,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color:Theme.of(context).colorScheme.secondary, width: 1.0),
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                            width: 1.0),
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimary, width: 2.0),
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            width: 2.0),
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 12), 
+                SizedBox(height: 12),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0), 
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: TextField(
                     controller: _emailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
-                      filled: true,
-                      fillColor: Theme.of(context).colorScheme.primary,
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 12.0, 
-                        horizontal: 16.0,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color:Theme.of(context).colorScheme.secondary, width: 1.0),
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimary, width: 2.0),
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                    ),
-                    obscureText: true,
-                  ),
-                ),
-                SizedBox(height: 12), 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0), 
-                  child: TextField(
-                    controller: _mobileNumberController,
-                    decoration: InputDecoration(
-                      labelText: 'Mobile Number',
-                      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary),
                       filled: true,
                       fillColor: Theme.of(context).colorScheme.primary,
                       contentPadding: EdgeInsets.symmetric(
@@ -129,63 +151,45 @@ class _ProfilePageState extends State<ProfilePage> {
                         horizontal: 16.0,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color:Theme.of(context).colorScheme.secondary, width: 1.0),
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                            width: 1.0),
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.onPrimary, width: 2.0),
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            width: 2.0),
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                     ),
-                    obscureText: true,
                   ),
                 ),
-                SizedBox(height: 12), 
+                SizedBox(height: 12),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0), 
-                  child: TextField(
-                    controller: _countryController,
-                    decoration: InputDecoration(
-                      labelText: 'Country',
-                      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
-                      filled: true,
-                      fillColor: Theme.of(context).colorScheme.primary,
-                      contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0,),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color:Theme.of(context).colorScheme.secondary, width: 1.0),
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.onPrimary, width: 2.0),
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                    ),
-                    obscureText: true,
-                  ),
-                ),
-                SizedBox(height: 12), 
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0), 
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: TextField(
                     controller: _passwordController,
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary),
                       filled: true,
                       fillColor: Theme.of(context).colorScheme.primary,
                       contentPadding: EdgeInsets.symmetric(
-                        vertical: 12.0, 
+                        vertical: 12.0,
                         horizontal: 16.0,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color:Theme.of(context).colorScheme.secondary, width: 1.0),
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                            width: 1.0),
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimary, width: 2.0),
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            width: 2.0),
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                     ),
@@ -206,6 +210,30 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   child: Text('Save Profile'),
                 ),
+                SizedBox(height: 20),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Battery Level: ',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '$_batteryLevel%',
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -214,4 +242,3 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-

@@ -17,7 +17,6 @@ class _HomePageState extends State<HomePage> {
   static const List<Widget> _pages = [
     FavouritesPage(),
     Homecontent(),
-    // Visited(),
     Weather(),
     ProfilePage(),
   ];
