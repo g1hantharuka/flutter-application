@@ -186,8 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                             MaterialPageRoute(
                                 builder: (context) => RegistrationPage()),
                           );
-                          //signUserIn method called
-                          // signUserIn();
+                          
                         },
                         child: Text(
                           'Forgot Password ?',
